@@ -1,108 +1,82 @@
-# Reco Browser Guard
+<!--
+  SOURCE OF TRUTH. This file is maintained in the private Reco monorepo at
+  src/browser-guard/public-repo/README.md and synced to the root of the public
+  RecoLabs/browser-guard repo by the "browser-guard release ZIPs" GitHub Action.
+  Edit it there, not in the public repo — a direct edit in the public repo is
+  overwritten on the next release.
+-->
 
-Enterprise browser extension for security posture monitoring.
+![Reco Browser Guard — login event tracking, app usage analysis, and shadow IT discovery](cover.jpg)
 
-## Installation
+# Reco Browser Guard — Downloads
 
-This extension is distributed via MDM policy. See your IT administrator for deployment instructions.
+Manually-installable builds of the **Reco Browser Guard** browser extension for
+**Google Chrome** and **Microsoft Edge**.
 
-Download the latest `.crx` package from the [Releases](https://github.com/RecoLabs/browser-guard/releases) page.
+This repo hosts **only the built release ZIPs** — one Chrome ZIP and one Edge ZIP
+per version, attached to each [GitHub Release](../../releases). It does **not**
+contain the extension's source code.
 
-### MDM Force-Install Policy
+> **When to use this.** These downloads are the **store-independent manual-install
+> / hotfix path**: install or update Browser Guard without waiting on Chrome Web
+> Store review. For fleet-wide managed rollout, prefer the Chrome Web Store
+> listing or an MDM force-install policy — your Reco contact will tell you which
+> applies to your organization.
 
-```
-pbfgnafbbeaneebmmmppeiogjldjlgdf;https://github.com/RecoLabs/browser-guard/releases/download/v1.0.0/updates.xml
-```
+## Download
 
----
+Grab the latest version from the [**Releases** page](../../releases/latest). Each
+release includes:
 
-## Publishing a New Version
+| Browser | Asset                              |
+| ------- | ---------------------------------- |
+| Chrome  | `browser-guard-<version>-chrome.zip` |
+| Edge    | `browser-guard-<version>-edge.zip`   |
 
-### Option A: Command Line
+Download the ZIP that matches your browser, then follow the matching steps below.
 
-```bash
-cd src/browser-guard
+## Install on Chrome
 
-# 1. Build the extension
-npm run build
+1. **Unzip** the downloaded `browser-guard-<version>-chrome.zip` into a folder you
+   will keep (Chrome loads the extension from this folder — don't delete it).
+2. Open `chrome://extensions` in the address bar.
+3. Turn on **Developer mode** (toggle, top-right).
+4. Click **Load unpacked** and select the unzipped folder.
+5. Reco Browser Guard now appears in your extensions list and starts running.
 
-# 2. Pack into .crx (reuse the .pem key to keep the extension ID stable)
-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
-  --pack-extension=.output/chrome-mv3 \
-  --pack-extension-key=.output/chrome-mv3.pem
+## Install on Edge
 
-# 3. Create a new release and upload the .crx
-gh release create v1.1.0 \
-  .output/chrome-mv3.crx \
-  --repo RecoLabs/browser-guard \
-  --title "Browser Guard v1.1.0" \
-  --notes "Description of changes"
+1. **Unzip** the downloaded `browser-guard-<version>-edge.zip` into a folder you
+   will keep (Edge loads the extension from this folder — don't delete it).
+2. Open `edge://extensions` in the address bar.
+3. Turn on **Developer mode** (toggle, left sidebar).
+4. Click **Load unpacked** and select the unzipped folder.
+5. Reco Browser Guard now appears in your extensions list and starts running.
 
-# 4. Create updates.xml pointing to the new version
-cat > /tmp/updates.xml << 'EOF'
-<?xml version='1.0' encoding='UTF-8'?>
-<gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
-  <app appid='pbfgnafbbeaneebmmmppeiogjldjlgdf'>
-    <updatecheck codebase='https://github.com/RecoLabs/browser-guard/releases/download/v1.1.0/chrome-mv3.crx'
-                 version='1.1.0' />
-  </app>
-</gupdate>
-EOF
+## Updating to a new version
 
-# 5. Attach updates.xml to the new release
-gh release upload v1.1.0 /tmp/updates.xml --repo RecoLabs/browser-guard
+Manually-loaded extensions do **not** auto-update. To move to a newer build:
 
-# 6. Update the previous release's updates.xml so existing installs auto-update
-gh release upload v1.0.0 /tmp/updates.xml --repo RecoLabs/browser-guard --clobber
-```
+1. Download the new version's ZIP for your browser from
+   [Releases](../../releases/latest) and unzip it (overwrite the same folder, or
+   use a new one).
+2. Open `chrome://extensions` / `edge://extensions`.
+3. If you unzipped over the same folder, click the **Reload** (↻) icon on the
+   Browser Guard card. If you used a new folder, remove the old entry and
+   **Load unpacked** the new one.
 
-### Option B: GitHub UI (Manual)
+The extension keeps its registration across a reload, so no re-registration is
+needed for a routine version bump.
 
-1. **Build and pack** the extension locally (steps 1–2 above are still required)
+## Verify the install
 
-2. **Go to** https://github.com/RecoLabs/browser-guard/releases
+- The Browser Guard card on the extensions page shows the version you installed.
+- If your organization provisioned a gateway/registration token, the extension
+  registers automatically and begins monitoring; otherwise open its **Options**
+  page to complete registration.
 
-3. **Click "Draft a new release"**
+## Support
 
-4. **Create a new tag** — type the version (e.g., `v1.1.0`) in the "Choose a tag" dropdown and select "Create new tag on publish"
-
-5. **Fill in the release details:**
-   - Title: `Browser Guard v1.1.0`
-   - Description: what changed in this version
-
-6. **Attach files** — drag and drop (or click "Attach binaries"):
-   - `chrome-mv3.crx` (from `.output/chrome-mv3.crx`)
-   - `updates.xml` (see template below — update the version and codebase URL)
-
-7. **Click "Publish release"**
-
-8. **Update the previous release's `updates.xml`** to point to the new version:
-   - Go to the previous release (e.g., v1.0.0)
-   - Delete the old `updates.xml` asset (click the ✕ next to it)
-   - Upload the new `updates.xml` (same file as step 6)
-
-### updates.xml Template
-
-Replace `VERSION` and `TAG` with the new version:
-
-```xml
-<?xml version='1.0' encoding='UTF-8'?>
-<gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
-  <app appid='pbfgnafbbeaneebmmmppeiogjldjlgdf'>
-    <updatecheck codebase='https://github.com/RecoLabs/browser-guard/releases/download/TAG/chrome-mv3.crx'
-                 version='VERSION' />
-  </app>
-</gupdate>
-```
-
----
-
-## How Auto-Update Works
-
-Chrome periodically polls the `updates.xml` URL from the MDM policy. When it finds a version number higher than what's installed, it downloads and installs the new `.crx` automatically. No MDM policy change is needed — existing installs self-update.
-
-## Important
-
-- **Keep the `.pem` key safe** — it determines the extension ID. If lost, the ID changes and all MDM policies break.
-- **Extension ID:** `pbfgnafbbeaneebmmmppeiogjldjlgdf`
-- The `version` in `updates.xml` must match the `version` in the extension's `manifest.json`.
+Contact your Reco representative for the gateway URL, registration token, and any
+installation help. This repository contains release artifacts only — please do
+not open issues here.
