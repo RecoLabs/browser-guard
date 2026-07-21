@@ -167,13 +167,17 @@ The store-independent / hotfix path: install or update without waiting on Chrome
 Web Store review. Manually-loaded extensions do **not** auto-update — you re-load
 a new ZIP to upgrade.
 
-Download the ZIP matching your browser from the
-[**Releases** page](../../releases/latest):
+On the [**Releases** page](../../releases/latest), under **Assets**, download the
+ZIP matching your browser:
 
 | Browser | Asset                                |
 | ------- | ------------------------------------ |
 | Chrome  | `browser-guard-<version>-chrome.zip` |
 | Edge    | `browser-guard-<version>-edge.zip`   |
+
+> Download the **named ZIP above** — not the "Source code (zip)" / "Source code
+> (tar.gz)" entries. Those two are added automatically by GitHub for every
+> release and do **not** contain the installable extension.
 
 **Install on Chrome**
 
